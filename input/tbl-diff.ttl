@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: Tim Berners-Lee
+# SPDX-FileCopyrightText: Dan Connolly
+#
+# SPDX-License-Identifier: CC0-1.0
+
+:Bob :pet _:p.
+_:p :size "small".
+:Bob :brother :Pete.
+_:p :mother _:p2.
+:Pete :pet _:p2.
+
+    :Bob     :brother :Pete;
+         :pet  [
+             :mother _:g0;
+             :size "small" ] .
+     
+    :Pete     :pet _:g0 .

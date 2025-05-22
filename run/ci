@@ -1,0 +1,442 @@
+#!/usr/bin/env bash
+
+# SPDX-FileCopyrightText: 2021 - 2025 Robin Vobruba <hoijui.quaero@gmail.com>
+#
+# SPDX-License-Identifier: Unlicense
+
+# Exit immediately on each error and unset variable;
+# see: https://vaneyckt.io/posts/safer_bash_scripts_with_set_euxo_pipefail/
+set -Eeuo pipefail
+#set -Eeu
+
+script_dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")
+project_root="$(dirname "$script_dir")"
+build_dir="$project_root/build"
+
+W3C_REPO_CLONE_URL="https://github.com/w3c/rdf-tests.git"
+W3_ORIG_TTL_TESTS_PAGE="https://www.w3.org/2013/TurtleTests"
+# W3_ORIG_TTL_TESTS_FILE="$build_dir/w3_turtle_tests_orig.zip"
+TEXT_LICENSE="CC0-1.0"
+AUTHOR_NAME="Robin Vobruba"
+AUTHOR_EMAIL="hoijui.quaero@gmail.com"
+AUTHOR="$AUTHOR_NAME <$AUTHOR_EMAIL>"
+CI="${CI+true}"
+if [ -z "$CI" ]
+then
+	CI="false"
+fi
+
+w3c_repo_dir="$build_dir/w3c-rdf-tests"
+tests_zip_local="$w3c_repo_dir/rdf/rdf11/rdf-turtle/TESTS.zip"
+w3_orig_extract_dir="$build_dir/w3-ttl-orig"
+target_repo_dir="$build_dir/target"
+target_slug="elevont/ttl-test-data"
+gen_slug="${target_slug}-generator"
+# licenses_file="$target_repo_dir/licenses.csv"
+# exceptions_file="$target_repo_dir/exceptions.csv"
+init=false
+push=false
+
+function print_help() {
+
+	echo "Creates an up-to-date collection of RDF/Turtle test files as a git repo."
+	echo "This script is designed to work both on a local machine"
+	echo "and on CI (specifically 'Github Action')."
+	echo
+	echo "More concretely, this does:"
+	echo
+	echo "1. Clone/fetch the W3C RDF-Tests repo:"
+	echo "   $W3C_REPO_CLONE_URL"
+	echo "   at '$w3c_repo_dir'"
+	echo "2. Download the original W3 Turtle test files from:"
+	echo "   $W3_ORIG_TTL_TESTS_PAGE"
+	echo "3. Clone the generated repo (\"target\") from its remote,"
+	echo "   or create a new repo if --init was provided,"
+	echo "   and it does not yet exist locally at"
+	echo "   '$target_repo_dir'"
+	echo "4. Assemble the test files from steps 1. and 2."
+	echo "   and the test sources from this repo"
+	echo "   in the target repo, and commit and push it."
+	echo
+	echo "Dependencies:"
+	echo "* git"
+	echo "* wget or curl"
+	echo "* reuse (optional)"
+	echo
+	echo "Usage:"
+	echo "         $(basename "$0") [OPTIONS]"
+	echo "Options:"
+	echo "          -i, --init    Initialize a new repo,"
+	echo "                        instead of fetching from the remote and extending that one"
+	echo "          -p, --push    Push the generated repo to its origin in the end"
+	echo "          -h, --help    Show this help message"
+}
+
+function echo_readme() {
+	echo "<!--"
+# REUSE-IgnoreStart
+	echo "SPDX-FileCopyrightText: $(date +'%Y') $AUTHOR"
+	echo
+	echo "SPDX-License-Identifier: $TEXT_LICENSE"
+# REUSE-IgnoreEnd
+	echo "-->"
+	echo
+	echo "# RDF/Turtle test files"
+	echo
+	echo "[![REUSE status]("
+	echo "    https://api.reuse.software/badge/github.com/$target_slug)]("
+	echo "    https://api.reuse.software/info/github.com/$target_slug)"
+	echo
+	echo "This repo contains an assemblage of [RDF/Turtle] test files from different sources."
+	echo "It's primary use-case is for unit-testing serializers and pretty-printers for the [RDF/Turtle] syntax."
+	echo
+	echo "---"
+	echo
+	echo "**NOTE**"
+	echo "This repo is entirely generated."
+	echo "If you want to change anything in here,"
+	echo "do so in [the generating repo](https://github.com/${target_slug}-generator/),"
+	echo "or [raise an issue there](https://github.com/${target_slug}-generator/issues/)."
+	echo
+	echo "---"
+	echo
+	echo "While this is a git repo, recording a meaningful history is not a goal of this repo."
+	echo "It is rather to be used simply by referring to the latest version on the 'master' branch."
+	echo "Yet it is a repo, as this makes it easier to be used in many scenarios,"
+	echo "including Rust(lang)s cargo build system."
+	echo
+	echo "- ... smells like a contradiction? -> Yes!"
+	echo "- ... are we simply lazy? -> ... yes! :/"
+	echo
+	echo "## Licensing"
+	echo
+	echo "This repo uses both the [REUSE](https://reuse.software/) way of indicating licenses"
+	echo "(note the LICENSES folder in this repo),"
+	echo "and the less precise but more common way of having a single LICENSE file,"
+	echo "as this is more commonly supported and understood, both by humans and machines."
+	echo
+	echo "[RDF/Turtle]: https://dvcs.w3.org/hg/rdf/raw-file/default/rdf-turtle/index.html"
+	echo
+}
+
+function echo_dot_license() {
+# REUSE-IgnoreStart
+	echo "SPDX-FileCopyrightText: $(date +'%Y') $AUTHOR"
+	echo
+	echo "SPDX-License-Identifier: $TEXT_LICENSE"
+# REUSE-IgnoreEnd
+}
+
+function construct_origin_url() {
+	gh_access_token="${GITHUB_TOKEN:-}"
+	if [ -z "$gh_access_token" ]
+	then
+		gh_user="git@"
+		gh_clone_url="${gh_user}github.com:${target_slug}.git"
+	else
+		gh_user="x-access-token:${gh_access_token}@"
+		gh_clone_url="https://${gh_user}github.com/${target_slug}.git"
+	fi
+	echo "$gh_clone_url"
+}
+
+function setup_repo() {
+	mkdir -p "$target_repo_dir"
+	git -C "$target_repo_dir" init
+	gh_clone_url="$(construct_origin_url)"
+	git -C  "$target_repo_dir" remote add origin "$gh_clone_url"
+}
+
+function initial_commit() {
+	# Creates the README.md
+	readme="$target_repo_dir/README.md"
+	echo_readme > "$readme"
+
+	# # Creates our two content files in CSV format
+	# touch "$licenses_file"
+	# touch "$exceptions_file"
+	# for file in "$licenses_file" "$exceptions_file"
+	# do
+	# 	echo_dot_license > "${file}.license"
+	# done
+
+	# `git add`s the files generated so far
+	git -C "$target_repo_dir" add '*'
+
+	# Creates our license files
+	if which reuse > /dev/null
+	then
+		# This fails because of a bug in the reuse tool (fixed in PR: https://github.com/fsfe/reuse-tool/pull/430):
+		# reuse --root "$target_repo_dir/" download --all
+		# reuse --root "$target_repo_dir/" lint
+		cur_dir="$(pwd)"
+		cd "$target_repo_dir"
+		reuse download --all
+		reuse lint
+		cd "$cur_dir"
+	else
+		mkdir -p "$target_repo_dir/LICENSES"
+		cp \
+			"$project_root/LICENSES/${TEXT_LICENSE}.txt" \
+			"$target_repo_dir/LICENSES/"
+	fi
+	cp \
+		"$target_repo_dir/LICENSES/${TEXT_LICENSE}.txt" \
+		"$target_repo_dir/LICENSE"
+	# `git add`s our license files
+	git -C "$target_repo_dir" add \
+		"$target_repo_dir/LICENSE*"
+
+	# Commits everything
+	git -C "$target_repo_dir" commit \
+		-m "Initial commit" \
+		> /dev/null
+}
+
+function list_xml_file_names() {
+	dir="$1"
+	find "$dir" -maxdepth 1 -name "*.xml" \
+		| sort --version-sort \
+		| while read -r file_path
+	do
+		file_name="${file_path#"$dir"/}"
+		ident="${file_name%.xml}"
+		echo "$ident"
+	done
+}
+
+function git_date() {
+	# this could be a SHA or a branch name
+	rev="$1"
+	# this should be either "a" or "c"
+	date_type="$2"
+
+	git -C "$w3c_repo_dir" show --no-patch --oneline --format="%${date_type}I" "$rev"
+}
+
+function git_tag_date() {
+	tag="$1"
+	git -C "$w3c_repo_dir" for-each-ref --format '%(creatordate:iso-strict)' "refs/tags/$tag" --sort=taggerdate
+}
+
+function make_rev() {
+	rev="$1"
+	is_tag="${2:-false}"
+
+	echo "Making $rev ..."
+
+	git -C "$w3c_repo_dir" checkout "$rev" 2> /dev/null
+	GIT_AUTHOR_DATE=$(git_date "HEAD" "a")
+	GIT_COMMITTER_DATE=$(git_date "HEAD" "c")
+	export GIT_AUTHOR_DATE
+	export GIT_COMMITTER_DATE
+	echo "    author date:   $GIT_AUTHOR_DATE"
+	echo "    committer date: $GIT_COMMITTER_DATE"
+
+	list_xml_file_names "$w3c_repo_dir/src" > "$licenses_file"
+	list_xml_file_names "$w3c_repo_dir/src/exceptions" > "$exceptions_file"
+	git -C "$target_repo_dir" add \
+		"$licenses_file" \
+		"$exceptions_file"
+	if git -C "$target_repo_dir" commit --allow-empty -m "Release $rev" > /dev/null \
+		&& $is_tag
+	then
+		GIT_AUTHOR_DATE=$(git_tag_date "$rev")
+		GIT_COMMITTER_DATE="$GIT_AUTHOR_DATE"
+		export GIT_AUTHOR_DATE
+		export GIT_COMMITTER_DATE
+		echo "    tag date:      $GIT_COMMITTER_DATE"
+		git -C "$target_repo_dir" tag -a -m "Release $rev" "$rev"
+	fi
+}
+
+# Calls `make_rev` if the revision is not yet present,
+# otherwise does nothing.
+function ensure_rev() {
+	rev="$1"
+	is_tag="${2:-false}"
+
+	echo
+	# If rev is not a tag, or the tag does not yet exist
+	if ! $is_tag || [ -z "$(git -C "$target_repo_dir" tag -l "$rev")" ]
+	then
+		make_rev "$@"
+	else
+		echo "Skipping $rev (already exists)"
+	fi
+}
+
+# read command-line args
+POSITIONAL=()
+while [[ $# -gt 0 ]]
+do
+	arg="$1"
+	shift # past argument
+
+	case "$arg" in
+		-i|--init)
+			init=true
+			;;
+		-p|--push)
+			push=true
+			;;
+		-h|--help)
+			print_help
+			exit 0
+			;;
+		*) # non-/unknown option
+			POSITIONAL+=("$arg") # save it in an array for later
+			;;
+	esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+mkdir -p "$build_dir"
+
+echo
+echo "Ensuring the latest W3C RDF-Tests repo version is local ..."
+if ! [ -e "$w3c_repo_dir" ]
+then
+	mkdir -p "$(dirname "$w3c_repo_dir")"
+	git clone "$W3C_REPO_CLONE_URL" "$w3c_repo_dir"
+fi
+
+git -C "$w3c_repo_dir" fetch
+git -C "$w3c_repo_dir" rebase origin/main
+echo "Ensuring the latest W3C RDF-Tests repo version is local - done."
+echo
+
+# NOTE We need not download TESTS.zip separately,
+#      because the above repo (w3c-rdf-tests) already includes it under:
+#      build/w3c-rdf-tests/rdf/rdf11/rdf-turtle/TESTS.zip
+echo
+echo "Getting TESTS.zip and unpacking it ..."
+# w3_orig_zip_url="$W3_ORIG_TTL_TESTS_PAGE/TESTS.zip"
+#if ! [ -e "$W3_ORIG_TTL_TESTS_FILE" ]
+#then
+#	curl \
+#		--progress-bar \
+#		--fail-with-body \
+#		-o "$W3_ORIG_TTL_TESTS_FILE" \
+#		"$w3_orig_zip_url"
+#fi
+if ! [ -d "$w3_orig_extract_dir" ] || [ -z "$(ls -A "$w3_orig_extract_dir")" ]
+then
+	rm -rf "${w3_orig_extract_dir:?}/"*
+	mkdir -p "$w3_orig_extract_dir"
+	unzip \
+		-d "$w3_orig_extract_dir" \
+		"$tests_zip_local"
+fi
+echo "Getting TESTS.zip and unpacking it - done."
+echo
+
+echo
+echo "Ensuring we have a local version of the target repo ..."
+# Makes sure we have at least a basic "target" repo
+# to mirror the releases of the sources of all our test files:
+#
+# - W3C rdf-tests repo
+# - W3 TESTS.zip
+# - our own test files directly developed in this repo
+if [ -e "$target_repo_dir" ]
+then
+	if $init
+	then
+		>&2 echo "ERROR: You chose to --init a new repo,"
+		>&2 echo "ERROR: but the target-dir already exists: '$target_repo_dir'"
+		>&2 echo "ERROR: Consider not to --init, or removing the dir with:"
+		>&2 echo "ERROR: rm -Rf \"$target_repo_dir\""
+		exit 1
+	else
+		git -C "$target_repo_dir" fetch
+		git -C "$target_repo_dir" rebase origin/master
+	fi
+else
+	if $init
+	then
+		if $CI && [ -z "${GITHUB_TOKEN:-}" ]
+		then
+			>&2 echo "ERROR: You seem to be running on CI, but the env var GITHUB_TOKEN is not set!"
+			exit 1
+		fi
+
+		setup_repo
+		initial_commit
+	else
+		gh_clone_url="$(construct_origin_url)"
+		mkdir -p "$(dirname "$target_repo_dir")"
+		git clone "$gh_clone_url" "$target_repo_dir"
+	fi
+fi
+if $CI
+then
+	git -C "$target_repo_dir" config user.name  "$AUTHOR_NAME"
+	git -C "$target_repo_dir" config user.email "$AUTHOR_EMAIL"
+fi
+echo "Ensuring we have a local version of the target repo - done."
+echo
+
+echo
+echo "Moving the sources into the target dir ..."
+rm -Rf \
+	"$target_repo_dir/input" \
+	"$target_repo_dir/output"
+
+mkdir -p "$target_repo_dir/input/w3c/modern/rdf11"
+find "$w3c_repo_dir/rdf/rdf11/rdf-turtle/" \
+	-maxdepth 1 \
+	\( -name "*.ttl" \
+	-o -name "*.nt"  \
+	-o -name "README*" \) | while read -r input_file
+do
+	cp "$input_file" "$target_repo_dir/input/w3c/modern/rdf11/"
+done
+
+mkdir -p "$target_repo_dir/input/w3c/modern/rdf12"
+cp -r "$w3c_repo_dir/rdf/rdf12/rdf-turtle/"* \
+	"$target_repo_dir/input/w3c/modern/rdf12/"
+
+mkdir -p "$target_repo_dir/input/w3c/orig"
+cp -r "$w3_orig_extract_dir/TurtleTests/"* "$target_repo_dir/input/w3c/orig/"
+
+mkdir -p "$target_repo_dir/input/turtlefmt"
+mkdir -p "$target_repo_dir/output/turtlefmt"
+cp -r "input/"* "$target_repo_dir/input/turtlefmt/"
+cp -r "output/"* "$target_repo_dir/output/turtlefmt/"
+
+echo "Moving the sources into the target dir - done."
+echo
+
+echo
+echo "Committing content ..."
+GIT_AUTHOR_DATE=$(git_date "HEAD" "a")
+GIT_COMMITTER_DATE=$(git_date "HEAD" "c")
+export GIT_AUTHOR_DATE
+export GIT_COMMITTER_DATE
+echo "    author date:   $GIT_AUTHOR_DATE"
+echo "    committer date: $GIT_COMMITTER_DATE"
+
+git -C "$target_repo_dir" add '*'
+git -C "$target_repo_dir" commit --allow-empty -m "Latest changes as of $(date) (generated)" > /dev/null
+echo "Committing content - done."
+echo
+
+# git -C "$w3c_repo_dir" tag \
+# 	| sort --version-sort \
+# 	| while read -r tag
+# do
+# 	# HACK This check is required (as of 24. October 2021),
+# 	#      because of the extraneous/wrongly-named tag '3.3'
+# 	#      (the correctly named 'v3.3' also exists)
+# 	if [[ $tag = v* ]]
+# 	then
+# 		ensure_rev "$tag" true
+# 	fi
+# done
+#ensure_rev "master" false
+
+if $push
+then
+	git -C  "$target_repo_dir" push origin --tags master
+fi

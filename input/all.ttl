@@ -1,0 +1,131 @@
+PREFIX ex: <http://example.net/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX : <http://example.io/>
+
+# SPDX-FileCopyrightText: wikipedia.org
+# SPDX-FileCopyrightText: Helsing GmbH
+#
+# SPDX-License-Identifier: CC-BY-SA-4.0 AND Apache-2.0
+
+# Test suites:
+#
+# - <https://www.w3.org/2013/TurtleTests/>
+# - <https://github.com/w3c/rdf-tests>
+#   - rdf/rdf11/rdf-turtle/syntax/*.ttl
+#   - rdf/rdf12/rdf-turtle/syntax/*.ttl
+# - our own (turtlefmt+)
+
+# Plain
+#Plain 2
+
+#  Plain 3
+
+<s> a ex:Foo ;
+    <p> <http://example.com/o\u00E9> , ex:\-v\-\_v\.\. , 
+          "foo\u00E9\t\n\r'\"\u0022" , 'bar\U000000E9\'"' ,
+          "bar"@en-US , "test"^^<http://example.com/dt> ,
+          ( +01 +1.0 1.0e0 ) . # Foo
+# Comment
+[ ex:p ex:o , ex:o2 ; ex:p3 ex:o4 ; ex:p2 ex:o3 ; 
+  ex:p4 [ ex:p5 ex:o5 ] ] rdf:type ex:o6 . # Bar
+
+BASE  # Base
+    <http://example.org/test.ttl>
+@prefix ex: </new/> . # Prefix new
+
+# Literal normalization
+<s> <p> """ foo
+    bar"\n\tbaz\"\"\"
+\"""" .
+
+<s> <p> '''foo'"bar''' .
+
+<s> <p> "true"^^xsd:boolean , "false"^^<http://www.w3.org/2001/XMLSchema#boolean> ,
+    "+12"^^xsd:integer , "1.1"^^xsd:decimal  , "1.2e2"^^xsd:double .
+
+[] ex:p [] .
+
+[] <_> () .
+
+() <Y> [] .
+
+() <Y> [] .
+
+( 0 ) : ( 0 ) .
+
+( 101 ) l:337 ( 101 ) .
+
+(0) : (0) .
+
+:P :p :o .
+
+:P :p :O .
+
+( <s> <s2> <s3> ) ex:p ex:o .
+
+( () <s> <s2> () <s3> ( <s4> () <s5> <s6> ) ) ex:p ex:o .
+
+<s> ex:p ( <o> <o2> <o3> ) .
+
+<s> ex:p2 ( <o> <o2> ( <o4> () <o5> <o6> ) () ) .
+
+# I think this should at least issue a warning in a linter (OOPS?),
+# because `()` translates to `rdf:nil` directly,
+# meaning we extend a term from an other vocabulary (in this case `rdf`)
+() ex:p ex:o .
+# is the same as:
+rdf:nil ex:p ex:o .
+
+<http://example.org/web-data>
+  ex:title "Web Data" ;
+  ex:professor _:entity ;
+  ex:students _:students ;
+  ex:generatedBy _:activity1 ;
+  ex:updatedWith _:activity2 ;
+  .
+
+_:entity
+  ex:fullName "Alice Carol" ;
+  ex:homePage <http://example.net/alice-carol> ;
+  ex:hasAddress _:address ;
+  .
+
+_:entity2
+  ex:fullName "Bob Barnebie" ;
+  ex:homePage <http://example.net/bob-barnebie> ;
+  .
+
+_:address
+  a ex:Address ;
+  ex:streetAddress "123 Main St." ;
+  ex:postalCode "A1A1A1" ;
+  ex:addressLocality "London" ;
+  .
+
+_:students
+  a rdf:Bag ;
+  ex:hasMember _:s1 ;
+  ex:hasMember _:s2 ;
+  .
+
+_:s1
+  ex:fullName "Mary Goround" ;
+  .
+
+_:s2
+  ex:fullName "The Block" ;
+  .
+
+_:activity1
+  a ex:Event;
+  ex:creator _:entity ;
+  ex:atTime "Tuesday 11 February, 06:51:00 CST" ;
+  .
+
+_:activity2
+  a ex:Event, ex:Update ;
+  ex:actionOver _:activity1 ;
+  ex:creator _:entity2 ;
+  ex:atTime "Monday 17 February, 08:12:00 CST" ;
+  .

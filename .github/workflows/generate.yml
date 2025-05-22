@@ -1,0 +1,47 @@
+# SPDX-FileCopyrightText: 2021-2025 Robin Vobruba <hoijui.quaero@gmail.com>
+#
+# SPDX-License-Identifier: Unlicense
+
+name: generate
+on:
+  schedule:
+    - cron: "3 4 * * 5" # at 03:04 every Friday, UTC
+  push:
+    branches: [ master ]
+    paths:
+      - 'ci-run'
+      - '.github/workflows/generate.yml'
+jobs:
+  push_to_registry:
+    name: Compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check out this repo"
+        uses: actions/checkout@v4
+
+      - name: "Create the build dir"
+        run: mkdir -p build
+
+      - name: "Check out the 'w3c' tests repo"
+        uses: actions/checkout@v4
+        with:
+          repository: 'w3c/rdf-tests'
+          path: 'build/w3c-rdf-tests'
+
+      - name: Download TESTS.zip from https://www.w3.org/2013/TurtleTests/
+        uses: sozo-design/curl@v1.0.2
+        with:
+          args: -o build/w3_turtle_tests_orig.zip "https://www.w3.org/2013/TurtleTests/TESTS.zip"
+
+      - name: "Check out the target repo"
+        uses: actions/checkout@v4
+        with:
+          repository: 'elevont/ttl-test-data'
+          path: 'build/target'
+          token: ${{ secrets.API_TOKEN_GITHUB }}
+          fetch-depth: 0
+
+      - name: "Generate: ttl-test-data"
+        run: |
+          run/ci --push
+
