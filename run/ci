@@ -200,12 +200,19 @@ function git_date() {
 	# this should be either "a" or "c"
 	date_type="$2"
 
-	git -C "$w3c_repo_dir" show --no-patch --oneline --format="%${date_type}I" "$rev"
+	git -C "$w3c_repo_dir" show \
+		--no-patch \
+		--oneline \
+		--format="%${date_type}I" \
+		"$rev"
 }
 
 function git_tag_date() {
 	tag="$1"
-	git -C "$w3c_repo_dir" for-each-ref --format '%(creatordate:iso-strict)' "refs/tags/$tag" --sort=taggerdate
+	git -C "$w3c_repo_dir" for-each-ref \
+		--format '%(creatordate:iso-strict)' \
+		"refs/tags/$tag" \
+		--sort=taggerdate
 }
 
 # read command-line args
@@ -360,11 +367,17 @@ echo "    author date:   $GIT_AUTHOR_DATE"
 echo "    committer date: $GIT_COMMITTER_DATE"
 
 git -C "$target_repo_dir" add '*'
-git -C "$target_repo_dir" commit --allow-empty -m "Latest changes as of $(date) (generated)" > /dev/null
+git -C "$target_repo_dir" commit \
+	--allow-empty \
+	-m "Latest changes as of $(date) (generated)" \
+	> /dev/null
 echo "Committing content - done."
 echo
 
 if $push
 then
-	git -C  "$target_repo_dir" push origin --tags master
+	git -C  "$target_repo_dir" push \
+		origin \
+		--tags \
+		master
 fi
