@@ -376,8 +376,14 @@ echo
 
 if $push
 then
+	echo
+	echo "Pushing to remote ..."
 	git -C  "$target_repo_dir" push \
 		origin \
 		--tags \
 		master
+	echo "Pushing to remote - done."
+	echo
 fi
+
+echo "done."
