@@ -349,11 +349,10 @@ cp -r "$w3c_repo_dir/rdf/rdf12/rdf-turtle/"* \
 mkdir -p "$target_repo_dir/input/w3c/orig"
 cp -r "$w3_orig_extract_dir/TurtleTests/"* "$target_repo_dir/input/w3c/orig/"
 
-mkdir -p "$target_repo_dir/input/turtlefmt"
-mkdir -p "$target_repo_dir/output/turtlefmt"
-cp -r "input/"* "$target_repo_dir/input/turtlefmt/"
-cp -r "output/"* "$target_repo_dir/output/turtlefmt/"
-
+mkdir -p "$target_repo_dir/input/pretty_printing"
+mkdir -p "$target_repo_dir/output/pretty_printing"
+cp -r "input/"* "$target_repo_dir/input/pretty_printing/"
+cp -r "output/"* "$target_repo_dir/output/pretty_printing/"
 echo "Moving the sources into the target dir - done."
 echo
 
