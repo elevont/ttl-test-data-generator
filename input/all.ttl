@@ -2,6 +2,7 @@ PREFIX ex: <http://example.net/>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX : <http://example.io/>
+PREFIX l: <http://lolol.hu/>
 
 # SPDX-FileCopyrightText: wikipedia.org
 # SPDX-FileCopyrightText: Helsing GmbH
@@ -30,9 +31,9 @@ PREFIX : <http://example.io/>
 [ ex:p ex:o , ex:o2 ; ex:p3 ex:o4 ; ex:p2 ex:o3 ; 
   ex:p4 [ ex:p5 ex:o5 ] ] rdf:type ex:o6 . # Bar
 
-BASE  # Base
-    <http://example.org/test.ttl>
-@prefix ex: </new/> . # Prefix new
+# BASE  # Base
+#     <http://example.org/>
+# @prefix ex: </new/> . # Prefix new
 
 # Literal normalization
 <s> <p> """ foo

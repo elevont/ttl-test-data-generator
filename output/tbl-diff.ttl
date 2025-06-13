@@ -1,12 +1,9 @@
-# SPDX-FileCopyrightText: Tim Berners-Lee
-# SPDX-FileCopyrightText: Dan Connolly
-#
-# SPDX-License-Identifier: CC0-1.0
+@prefix : <http://example.org/> .
 
 :Bob
   :brother :Pete ;
   :pet  [
-    :mother _:g0;
+    :mother _:g0 ;
     :size "small"
   ] ;
   .
@@ -14,3 +11,4 @@
 :Pete
   :pet _:g0 ;
   .
+

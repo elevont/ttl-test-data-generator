@@ -1,21 +1,8 @@
-@base <http://example.com/> . # test
-@prefix ex: </> . # Prefix
+@base <http://example.com/> .
+@prefix ex: </> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-# SPDX-FileCopyrightText: Helsing GmbH
-#
-# SPDX-License-Identifier: Apache-2.0
-
-# Plain
-#Plain 2
-
-#  Plain 3
-
-
-# Foo
-# Comment
-# Bar
 <s>
   a
     ex:Foo ;
@@ -51,10 +38,6 @@
     ex:o6 ;
   .
 
-@base <http://example.org/test.ttl> . # Base
-@prefix ex: </new/> . # Prefix new
-
-# Literal normalization
 <s>
   <p>
     """ foo

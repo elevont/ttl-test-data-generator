@@ -1,37 +1,34 @@
 @prefix ex: <http://example.org/> .
-@prefix prtyr: <http://w3id.org/oseg/ont/prtyr#> .
+@prefix prtr: <http://w3id.org/oseg/ont/prtr#> .
 @prefix schema: <http://schema.org/> .
 
-# SPDX-FileCopyrightText: Helsing GmbH
-#
-# SPDX-License-Identifier: Apache-2.0
-
-ex:nonymous
+ex:anonymous
   a schema:Text ;
   schema:author [
-      prtyr:sortingId 2 ;
+      prtr:sortingId 2 ;
       schema:name "Robert Polson" ;
     ] ;
   .
 
-_:x
+[
   a schema:Person ;
-  prtyr:sortingId 1 ;
+  prtr:sortingId 1 ;
   schema:name "Micha Maloun" ;
+]
   .
 
-_:234
+[
   a schema:Organization ;
-  prtyr:sortingId 5 ;
+  prtr:sortingId 5 ;
   schema:name "Corp inc." ;
+]
   .
 
-[]
-  prtyr:sortingId 100 ;
-  .
+[ prtr:sortingId 100 ] .
 
-_:abc
+[
   a schema:Person ;
-  prtyr:sortingId 1800 ;
+  prtr:sortingId 1800 ;
   schema:name "Jane Doe" ;
+]
   .

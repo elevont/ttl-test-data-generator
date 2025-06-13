@@ -1,5 +1,5 @@
 @prefix ex: <http://example.org/> .
-@prefix prtyr: <http://w3id.org/oseg/ont/prtyr#> .
+@prefix prtr: <http://w3id.org/oseg/ont/prtr#> .
 @prefix schema: <http://schema.org/> .
 
 
@@ -8,25 +8,25 @@
 # SPDX-License-Identifier: Apache-2.0
 
 _:234 a schema:Organization ;
-  prtyr:sortingId 5 ;
+  prtr:sortingId 5 ;
   schema:name "Corp inc." ;
   .
 
 _:x a schema:Person ;
-  prtyr:sortingId 1 ;
+  prtr:sortingId 1 ;
   schema:name "Micha Maloun" ;
   .
 
 _:abc a schema:Person ;
-  prtyr:sortingId 1800 ;
+  prtr:sortingId 1800 ;
   schema:name "Jane Doe" ;
   .
 
-ex:nonymous a schema:Text ;
+ex:anonymous a schema:Text ;
   schema:author [
-    prtyr:sortingId 2 ;
+    prtr:sortingId 2 ;
     schema:name "Robert Polson" ;
   ] ;
   .
 
-[] prtyr:sortingId 100 .
+[] prtr:sortingId 100 .
