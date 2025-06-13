@@ -38,7 +38,7 @@ jobs:
         with:
           repository: 'elevont/ttl-test-data'
           path: 'build/target'
-          token: ${{ secrets.API_TOKEN_GITHUB }}
+          token: ${{ secrets.TARGET_REPO_TOKEN }}
           fetch-depth: 0
 
       - name: "Generate: ttl-test-data"
