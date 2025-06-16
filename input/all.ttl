@@ -15,7 +15,7 @@ PREFIX l: <http://lolol.hu/>
 # - <https://github.com/w3c/rdf-tests>
 #   - rdf/rdf11/rdf-turtle/syntax/*.ttl
 #   - rdf/rdf12/rdf-turtle/syntax/*.ttl
-# - our own (turtlefmt+)
+# - our own (prttl)
 
 # Plain
 #Plain 2
