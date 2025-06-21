@@ -1,5 +1,5 @@
-@base <http://example.com/> .
-@prefix ex: </> .
+@base <http://example.org/> .
+@prefix ex: <http://example.net/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -14,13 +14,36 @@
       +1.0
       1.0e0
     ) ,
-    "bar"@en-US ,
+    false ,
+    true ,
+    1.1 ,
+    1.2e2 ,
+    +12 ,
+    "test"^^<http://example.com/dt> ,
+    "bar"@en-us ,
+    """ foo
+    bar"
+	baz"\""
+\"""" ,
     "baré'\"" ,
-    "fooé\t\n\r'\"\"" ,
-    "test"^^<http://example.com/dt> ;
+    "foo'\"bar" ,
+    """fooé	
+
+'"\"""" ;
+  .
+
+(
+  <s>
+  <s2>
+  <s3>
+)
+  ex:p
+    ex:o ;
   .
 
 [
+  a
+    ex:o6 ;
   ex:p
     ex:o ,
     ex:o2 ;
@@ -33,38 +56,5 @@
       ex:p5
         ex:o5 ;
     ] ;
-]
-  a
-    ex:o6 ;
-  .
+] .
 
-<s>
-  <p>
-    """ foo
-    bar"
-	baz""\"
-\"""" ;
-  .
-
-<s>
-  <p>
-    """foo'"bar""" ;
-  .
-
-<s>
-  <p>
-    false ,
-    true ,
-    +12 ,
-    1.1 ,
-    1.2e2 ;
-  .
-
-(
-  <s>
-  <s2>
-  <s3>
-)
-  ex:p
-    ex:o ;
-  .

@@ -6,27 +6,29 @@
 <s>
   a ex:Foo ;
   <p>
-    <http://example.com/oé> ,
     ex:\-v-_v.\. ,
-  """ foo
-    bar"
-	baz""\"
-\"""" ,
-    +12 ,
-    1.1 ,
-    1.2e2 ,
-    "bar"@en-US ,
-    "baré'\"" ,
-    false ,
-    """foo'"bar""" ,
-    "fooé\t\n\r'\"\"" ,
-    "test"^^<http://example.com/dt> ,
-    true ,
+    <http://example.com/oé> ,
     (
       +01
       +1.0
       1.0e0
-    ) ;
+    ) ,
+    false ,
+    true ,
+    1.1 ,
+    1.2e2 ,
+    +12 ,
+    "test"^^<http://example.com/dt> ,
+    "bar"@en-us ,
+    """ foo
+    bar"
+	baz"\""
+\"""" ,
+    "baré'\"" ,
+    "foo'\"bar" ,
+    """fooé	
+
+'"\"""" ;
   .
 
 (
@@ -35,7 +37,7 @@
   <s3>
 ) ex:p ex:o .
 
-[]
+[
   a ex:o6 ;
   ex:p
     ex:o ,
@@ -43,5 +45,5 @@
   ex:p2 ex:o3 ;
   ex:p3 ex:o4 ;
   ex:p4 [ ex:p5 ex:o5 ] ;
-  .
+] .
 

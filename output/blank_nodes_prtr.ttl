@@ -1,10 +1,12 @@
 @prefix ex: <http://example.org/> .
 @prefix prtr: <http://w3id.org/oseg/ont/prtr#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix schema: <http://schema.org/> .
 
 ex:anonymous
   a schema:Text ;
-  schema:author [
+  schema:author
+    [
       prtr:sortingId 2 ;
       schema:name "Robert Polson" ;
     ] ;
@@ -14,15 +16,13 @@ ex:anonymous
   a schema:Person ;
   prtr:sortingId 1 ;
   schema:name "Micha Maloun" ;
-]
-  .
+] .
 
 [
   a schema:Organization ;
   prtr:sortingId 5 ;
   schema:name "Corp inc." ;
-]
-  .
+] .
 
 [ prtr:sortingId 100 ] .
 
@@ -30,5 +30,5 @@ ex:anonymous
   a schema:Person ;
   prtr:sortingId 1800 ;
   schema:name "Jane Doe" ;
-]
-  .
+] .
+

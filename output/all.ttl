@@ -1,15 +1,80 @@
-BASE <http://a.a>
-PREFIX : <http://example.io/>
-PREFIX ex: <http://example.net/>
-PREFIX l: <http://lolol.hu/>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
-@prefix prtr: <http://w3id.org/oseg/ont/prtr#> .
+@prefix : <http://example.io/> .
+@prefix ex: <http://example.net/> .
+@prefix l: <http://lolol.hu/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:P
+  :p
+    :O ,
+    :o ;
+  .
+
+<s>
+  a ex:Foo ;
+  ex:p
+    (
+      <o>
+      <o2>
+      <o3>
+    ) ;
+  ex:p2
+    (
+      <o>
+      <o2>
+      (
+        <o4>
+        ()
+        <o5>
+        <o6>
+      )
+      ()
+    ) ;
+  <p>
+    ex:\-v-_v.\. ,
+    <http://example.com/oé> ,
+    (
+      +01
+      +1.0
+      1.0e0
+    ) ,
+    false ,
+    true ,
+    1.1 ,
+    1.2e2 ,
+    +12 ,
+    "test"^^<http://example.com/dt> ,
+    "bar"@en-us ,
+    """ foo
+    bar"
+	baz"\""
+\"""" ,
+    "baré'\"" ,
+    "foo'\"bar" ,
+    """fooé	
+
+'"\"""" ;
+  .
 
 <http://example.org/web-data>
   ex:generatedBy _:activity1 ;
   ex:professor _:entity ;
   ex:students
+    [
+      a rdf:Bag ;
+      ex:hasMember
+        [
+          ex:fullName "Mary Goround" ;
+          prtr:sortingId 1 ;
+        ] ,
+        [
+          ex:fullName "The Block" ;
+          prtr:sortingId 2 ;
+        ] ;
+      prtr:sortingId 455 ;
+    ] ;
+  ex:title "Web Data" ;
+  ex:updatedWith
     [
       a
         ex:Event ,
@@ -23,76 +88,34 @@ PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
           ex:homePage ex:bob-barnebie ;
           prtr:sortingId 555 ;
         ] ;
-    ] ,
-    [
-      a rdf:Bag ;
-      ex:hasMember
-        [ ex:fullName "Mary Goround" ; prtr:sortingId 1 ] ,
-        [ ex:fullName "The Block" ; prtr:sortingId 2 ] ;
-        prtr:sortingId 455 ;
     ] ;
-  ex:title "Web Data" ;
-  ex:updatedWith  ;
   .
 
-</s>
-  a ex:Foo ;
-  </p>
-    <http://example.com/oé> ,
-    ex:\-v-_v.\. ,
-    " foo\n    bar\"\n\tbaz\"\"\"\n\"" ,
-    +12 ,
-    1.1 ,
-    1.2e2 ,
-    "bar"@en-us ,
-    "baré'\"" ,
-    false ,
-    "foo'\"bar" ,
-    "fooé\t\n\r'\"\"" ,
-    "test"^^<http://example.com/dt> ,
-    true ,
-    (
-      +01
-      +1.0
-      1.0e0
-    ) ;
-  ex:p
-    (
-      </o>
-      </o2>
-      </o3>
-    ) ;
-  ex:p2
-    (
-      </o>
-      </o2>
-      (
-        </o4>
-        ()
-        </o5>
-        </o6>
-      )
-      ()
-    ) ;
-  .
-
-:P
-  :p
-    :O ,
-    :o ;
-  .
-
-rdf:nil
-  </Y>
-    _:ab4d34b58f177b5b6a57d148b2c25bda ,
-    _:bd92d7f39308bb9fd039ad9d00c64836 ;
+()
   ex:p ex:o ;
+  <Y>
+    [] ,
+    [] ;
   .
 
 (
-  </s>
-  </s2>
-  </s3>
+  <s>
+  <s2>
+  <s3>
+) ex:p ex:o .
+
+(
+  ()
+  <s>
+  <s2>
+  ()
+  <s3>
+  (
+    <s4>
+    ()
+    <s5>
+    <s6>
+  )
 ) ex:p ex:o .
 
 ( 0 ) : ( 0 ) .
@@ -101,29 +124,9 @@ rdf:nil
 
 ( 101 ) l:337 ( 101 ) .
 
-(
-  ()
-  </s>
-  </s2>
-  ()
-  </s3>
-  (
-    </s4>
-    ()
-    </s5>
-    </s6>
-  )
-) ex:p ex:o .
+[ <_> () ] .
 
-_:activity1
-  a ex:Event ;
-  ex:atTime "Tuesday 11 February, 06:51:00 CST" ;
-  ex:creator _:entity ;
-  .
-
-[] </_> () .
-
-[]
+[
   a ex:o6 ;
   ex:p
     ex:o ,
@@ -131,7 +134,9 @@ _:activity1
   ex:p2 ex:o3 ;
   ex:p3 ex:o4 ;
   ex:p4 [ ex:p5 ex:o5 ] ;
-  .
+] .
+
+[ ex:p [] ] .
 
 _:entity
   ex:fullName "Alice Carol" ;
@@ -145,4 +150,9 @@ _:entity
   ex:homePage ex:alice-carol ;
   .
 
-[] ex:p _:baee8aead5e4a179140a87e602a06ed4 .
+_:activity1
+  a ex:Event ;
+  ex:atTime "Tuesday 11 February, 06:51:00 CST" ;
+  ex:creator _:entity ;
+  .
+

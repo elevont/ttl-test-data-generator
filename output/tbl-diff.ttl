@@ -2,13 +2,12 @@
 
 :Bob
   :brother :Pete ;
-  :pet  [
-    :mother _:g0 ;
-    :size "small"
-  ] ;
+  :pet
+    [
+      :mother _:g0 ;
+      :size "small" ;
+    ] ;
   .
 
-:Pete
-  :pet _:g0 ;
-  .
+:Pete :pet _:g0 .
 
