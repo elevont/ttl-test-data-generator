@@ -1,0 +1,159 @@
+@prefix : <http://example.io/> .
+@prefix ex: <http://example.net/> .
+@prefix l: <http://lolol.hu/> .
+@prefix prtr: <http://w3id.org/oseg/ont/prtr#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:P
+  :p
+    :O ,
+    :o ;
+  .
+
+<s>
+  a ex:Foo ;
+  ex:p
+    (
+      <o>
+      <o2>
+      <o3>
+    ) ;
+  ex:p2
+    (
+      <o>
+      <o2>
+      (
+        <o4>
+        ()
+        <o5>
+        <o6>
+      )
+      ()
+    ) ;
+  <p>
+    ex:\-v-_v.\. ,
+    <http://example.com/oé> ,
+    (
+      +01
+      +1.0
+      1.0e0
+    ) ,
+    false ,
+    true ,
+    1.1 ,
+    1.2e2 ,
+    +12 ,
+    "test"^^<http://example.com/dt> ,
+    "bar"@en-us ,
+    """ foo
+    bar"
+	baz"\""
+\"""" ,
+    "baré'\"" ,
+    "foo'\"bar" ,
+    """fooé	
+
+'"\"""" ;
+  .
+
+<http://example.org/web-data>
+  ex:generatedBy _:activity1 ;
+  ex:professor _:entity ;
+  ex:students
+    [
+      a rdf:Bag ;
+      ex:hasMember
+        [
+          ex:fullName "Mary Goround" ;
+          prtr:sortingId 1 ;
+        ] ,
+        [
+          ex:fullName "The Block" ;
+          prtr:sortingId 2 ;
+        ] ;
+      prtr:sortingId 455 ;
+    ] ;
+  ex:title "Web Data" ;
+  ex:updatedWith
+    [
+      a
+        ex:Event ,
+        ex:Update ;
+      prtr:sortingId 433 ;
+      ex:actionOver _:activity1 ;
+      ex:atTime "Monday 17 February, 08:12:00 CST" ;
+      ex:creator
+        [
+          ex:fullName "Bob Barnebie" ;
+          ex:homePage ex:bob-barnebie ;
+          prtr:sortingId 555 ;
+        ] ;
+    ] ;
+  .
+
+()
+  ex:p ex:o ;
+  <Y>
+    _:ab4d34b58f177b5b6a57d148b2c25bda ,
+    _:bd92d7f39308bb9fd039ad9d00c64836 ;
+  .
+
+(
+  <s>
+  <s2>
+  <s3>
+) ex:p ex:o .
+
+(
+  ()
+  <s>
+  <s2>
+  ()
+  <s3>
+  (
+    <s4>
+    ()
+    <s5>
+    <s6>
+  )
+) ex:p ex:o .
+
+( 0 ) : ( 0 ) .
+
+( 0 ) : ( 0 ) .
+
+( 101 ) l:337 ( 101 ) .
+
+[ <_> () ] .
+
+[
+  a ex:o6 ;
+  ex:p
+    ex:o ,
+    ex:o2 ;
+  ex:p2 ex:o3 ;
+  ex:p3 ex:o4 ;
+  ex:p4 [ ex:p5 ex:o5 ] ;
+] .
+
+[ ex:p _:387e645f4d967542 ] .
+
+_:entity
+  ex:fullName "Alice Carol" ;
+  ex:hasAddress
+    [
+      a ex:Address ;
+      ex:addressLocality "London" ;
+      ex:postalCode "A1A1A1" ;
+      ex:streetAddress "123 Main St." ;
+    ] ;
+  ex:homePage ex:alice-carol ;
+  .
+
+_:activity1
+  a ex:Event ;
+  ex:atTime "Tuesday 11 February, 06:51:00 CST" ;
+  ex:creator _:entity ;
+  .
+
