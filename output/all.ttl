@@ -51,9 +51,7 @@
 \"""" ,
     "baré'\"" ,
     "foo'\"bar" ,
-    """fooé	
-
-'"\"""" ;
+    "fooé\t\n\r'\"\"" ;
   .
 
 <http://example.org/web-data>
@@ -63,15 +61,8 @@
     [
       a rdf:Bag ;
       ex:hasMember
-        [
-          ex:fullName "Mary Goround" ;
-          prtr:sortingId 1 ;
-        ] ,
-        [
-          ex:fullName "The Block" ;
-          prtr:sortingId 2 ;
-        ] ;
-      prtr:sortingId 455 ;
+        [ ex:fullName "Mary Goround" ] ,
+        [ ex:fullName "The Block" ] ;
     ] ;
   ex:title "Web Data" ;
   ex:updatedWith
@@ -79,14 +70,12 @@
       a
         ex:Event ,
         ex:Update ;
-      prtr:sortingId 433 ;
       ex:actionOver _:activity1 ;
       ex:atTime "Monday 17 February, 08:12:00 CST" ;
       ex:creator
         [
           ex:fullName "Bob Barnebie" ;
           ex:homePage ex:bob-barnebie ;
-          prtr:sortingId 555 ;
         ] ;
     ] ;
   .
@@ -124,8 +113,6 @@
 
 ( 101 ) l:337 ( 101 ) .
 
-[ <_> () ] .
-
 [
   a ex:o6 ;
   ex:p
@@ -137,6 +124,8 @@
 ] .
 
 [ ex:p [] ] .
+
+[ <_> () ] .
 
 _:entity
   ex:fullName "Alice Carol" ;

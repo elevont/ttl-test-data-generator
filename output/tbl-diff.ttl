@@ -4,10 +4,10 @@
   :brother :Pete ;
   :pet
     [
-      :mother _:g0 ;
+      :mother _:p2 ;
       :size "small" ;
     ] ;
   .
 
-:Pete :pet _:g0 .
+:Pete :pet _:p2 .
 
