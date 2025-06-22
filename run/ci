@@ -124,6 +124,16 @@ function echo_dot_license() {
 # REUSE-IgnoreEnd
 }
 
+function echo_dot_gitignore() {
+# REUSE-IgnoreStart
+	echo "SPDX-FileCopyrightText: $(date +'%Y') $AUTHOR"
+	echo
+	echo "SPDX-License-Identifier: $TEXT_LICENSE"
+# REUSE-IgnoreEnd
+	echo
+	echo "*.actual_output.ttl"
+}
+
 function construct_origin_url() {
 	gh_access_token="${GITHUB_TOKEN:-}"
 	if [ -z "$gh_access_token" ]
@@ -148,6 +158,8 @@ function initial_commit() {
 	# Creates the README.md
 	readme="$target_repo_dir/README.md"
 	echo_readme > "$readme"
+	gitignore="$target_repo_dir/.gitignore"
+	echo_dot_gitignore > "$gitignore"
 
 	# `git add`s the files generated so far
 	git -C "$target_repo_dir" add '*'
