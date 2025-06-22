@@ -80,7 +80,6 @@
       a
         ex:Event ,
         ex:Update ;
-      prtr:sortingId 433 ;
       ex:actionOver _:activity1 ;
       ex:atTime "Monday 17 February, 08:12:00 CST" ;
       ex:creator
@@ -89,14 +88,15 @@
           ex:homePage ex:bob-barnebie ;
           prtr:sortingId 555 ;
         ] ;
+      prtr:sortingId 433 ;
     ] ;
   .
 
 ()
   ex:p ex:o ;
   <Y>
-    _:ab4d34b58f177b5b6a57d148b2c25bda ,
-    _:bd92d7f39308bb9fd039ad9d00c64836 ;
+    [] ,
+    [] ;
   .
 
 (
@@ -125,8 +125,6 @@
 
 ( 101 ) l:337 ( 101 ) .
 
-[ <_> () ] .
-
 [
   a ex:o6 ;
   ex:p
@@ -137,7 +135,9 @@
   ex:p4 [ ex:p5 ex:o5 ] ;
 ] .
 
-[ ex:p _:387e645f4d967542 ] .
+[ ex:p [] ] .
+
+[ <_> () ] .
 
 _:entity
   ex:fullName "Alice Carol" ;
@@ -149,11 +149,13 @@ _:entity
       ex:streetAddress "123 Main St." ;
     ] ;
   ex:homePage ex:alice-carol ;
+  prtr:sortingId 612 ;
   .
 
 _:activity1
   a ex:Event ;
   ex:atTime "Tuesday 11 February, 06:51:00 CST" ;
   ex:creator _:entity ;
+  prtr:sortingId 678 ;
   .
 

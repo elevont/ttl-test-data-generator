@@ -88,6 +88,7 @@ rdf:nil ex:p ex:o .
   .
 
 _:entity
+  prtr:sortingId 612 ;
   ex:fullName "Alice Carol" ;
   ex:homePage <http://example.net/alice-carol> ;
   ex:hasAddress _:address ;
@@ -125,6 +126,7 @@ _:s2
 
 _:activity1
   a ex:Event;
+  prtr:sortingId 678 ;
   ex:creator _:entity ;
   ex:atTime "Tuesday 11 February, 06:51:00 CST" ;
   .
