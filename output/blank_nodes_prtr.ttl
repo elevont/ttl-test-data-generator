@@ -31,4 +31,3 @@ ex:anonymous
   prtr:sortingId 1800 ;
   schema:name "Jane Doe" ;
 ] .
-

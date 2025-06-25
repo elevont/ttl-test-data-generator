@@ -144,4 +144,3 @@ _:activity1
   ex:atTime "Tuesday 11 February, 06:51:00 CST" ;
   ex:creator _:entity ;
   .
-
